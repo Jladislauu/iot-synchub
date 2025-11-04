@@ -1,3 +1,4 @@
+// src/routes/deviceRoutes.ts (ATUALIZAR)
 import { Router } from "express";
 import {
   createDevice,
@@ -6,16 +7,18 @@ import {
 } from "../controllers/deviceController";
 import { validate } from "../middlewares/validate";
 import { createDeviceSchema } from "../services/validationSchema";
+import { auth } from "../middlewares/auth";  // ← IMPORTAR
 import { Server } from "socket.io";
 
 const deviceRoutes = (io: Server) => {
   const router = Router();
 
-  router.post("/", validate(createDeviceSchema), (req, res) =>
+  // 🛡️ TODAS AS ROTAS PROTEGIDAS
+  router.post("/", auth, validate(createDeviceSchema), (req, res) =>
     createDevice(req, res, io)
   );
-  router.get("/", listDevices);
-  router.patch("/:id/status", (req, res) => toggleStatus(req, res, io));
+  router.get("/", auth, listDevices);
+  router.patch("/:id/status", auth, (req, res) => toggleStatus(req, res, io));
 
   return router;
 };

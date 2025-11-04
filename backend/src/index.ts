@@ -5,6 +5,7 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { AppDataSource } from "./ormconfig";
 import deviceRoutes from "./routes/deviceRoutes";
+import authRoutes from "./routes/authRoutes";  
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,7 +25,9 @@ async function bootstrap() {
   app.use(express.json());
 
   // Rotas
+  app.use("/api/auth", authRoutes);  
   app.use("/api/devices", deviceRoutes(io));
+
 
   // Health check
   app.get("/", (req, res) => res.send("Backend rodando"));
